@@ -85,7 +85,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = - Math.PI * 0.5
 
 floor.receiveShadow = true
-scene.add(floor)
+// scene.add(floor)
 
 /**
  * Lights
@@ -109,17 +109,17 @@ directionalLight.position.set(5, 5, 5)
 directionalLight2.position.set(1.15, 6.3, -0.07)
 
 directionalLight.castShadow = true
-directionalLight.shadow.mapSize.width = 1024
-directionalLight.shadow.mapSize.height = 1024
+directionalLight.shadow.mapSize.set(1024, 1024)
 directionalLight.shadow.camera.near = 6
 directionalLight.shadow.camera.far = 5
-
-directionalLight2.shadow.mapSize.width = 1024
-directionalLight2.shadow.mapSize.height = 1024
-directionalLight2.shadow.camera.near = 1
-directionalLight2.shadow.camera.far = 1
+directionalLight.shadow.normalBias = 0.05
 
 directionalLight2.castShadow = true
+directionalLight2.shadow.mapSize.set(1024, 1024)
+directionalLight2.shadow.camera.near = 1
+directionalLight2.shadow.camera.far = 1
+directionalLight2.shadow.normalBias = 0.05
+
 
 scene.add(directionalLight, directionalLight2, directionalLight3)
 
@@ -176,7 +176,7 @@ window.addEventListener('resize', () =>
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(70, sizes.width / sizes.height, 0.1, 100)
-camera.position.set(2, 2, 9)
+camera.position.set(0, 2, 6)
 scene.add(camera)
 
 // Controls
@@ -190,9 +190,12 @@ controls.enableDamping = true
 const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
-renderer.outputColorSpace = THREE.LinearSRGBColorSpace
 renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
+// renderer.useLegacyLights = false
+// renderer.toneMapping = THREE.CineonToneMapping
+// renderer.toneMappingExposure = 1.75
+renderer.outputColorSpace = THREE.LinearSRGBColorSpace
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
