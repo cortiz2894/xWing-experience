@@ -1,4 +1,4 @@
-# Three.js Journey
+# X Wing Experience
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
