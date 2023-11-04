@@ -85,7 +85,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = - Math.PI * 0.5
 
 floor.receiveShadow = true
-// scene.add(floor)
+scene.add(floor)
 
 /**
  * Lights
@@ -97,31 +97,32 @@ const ambientLight = new THREE.AmbientLight('#634F85', 0.8)
 scene.add(ambientLight)
 
 //Directionals
-const directionalLight = new THREE.DirectionalLight('#78AFFF', 0.6)
-const directionalLight2 = new THREE.DirectionalLight('#78AFFF', 0.6)
-const directionalLight3 = new THREE.DirectionalLight('#78AFFF', 0.6)
+// const directionalLight = new THREE.DirectionalLight('#78AFFF', 0.6)
+const directionalLight = new THREE.DirectionalLight('#78AFFF', 1.6)
 
+const directionalLight2 = new THREE.DirectionalLight('#78AFFF', 0.6)
 
 const directionalHelper = new THREE.CameraHelper(directionalLight.shadow.camera)
 const directionalHelper2 = new THREE.CameraHelper(directionalLight2.shadow.camera)
 
-directionalLight.position.set(5, 5, 5)
 directionalLight2.position.set(1.15, 6.3, -0.07)
+directionalLight.position.set(5, 5, 5)
 
 directionalLight.castShadow = true
+directionalLight.shadow.camera.far = 15
 directionalLight.shadow.mapSize.set(1024, 1024)
-directionalLight.shadow.camera.near = 6
-directionalLight.shadow.camera.far = 5
 directionalLight.shadow.normalBias = 0.05
 
 directionalLight2.castShadow = true
+directionalLight2.shadow.camera.far = 15
 directionalLight2.shadow.mapSize.set(1024, 1024)
-directionalLight2.shadow.camera.near = 1
-directionalLight2.shadow.camera.far = 1
 directionalLight2.shadow.normalBias = 0.05
 
 
-scene.add(directionalLight, directionalLight2, directionalLight3)
+scene.add(
+    directionalLight, 
+    directionalLight2, 
+)
 
 // Directional Light 1
 gui.add(directionalLight, 'intensity').min(0).max(10).step(0.001).name('lightIntensity')
@@ -194,7 +195,7 @@ renderer.shadowMap.enabled = true
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 // renderer.useLegacyLights = false
 // renderer.toneMapping = THREE.CineonToneMapping
-// renderer.toneMappingExposure = 1.75
+renderer.toneMappingExposure = 1.75
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -228,7 +229,19 @@ const openWings = () => {
 }
 
 const closeWings = () => {
-    timeline.reverse()
+    // timeline.reverse()
+    gsap.to(wingRT.rotation, {
+        y:0
+    })
+    gsap.to(wingRB.rotation, {
+        y:0
+    }, '<')
+    gsap.to(wingLT.rotation, {
+        y:0
+    }, '<')
+    gsap.to(wingLB.rotation, {
+        y:0
+    }, '<')
 }
 var animations = { 
     OpenWings:function(){
@@ -244,24 +257,47 @@ gui.add(animations,'CloseWings');
 
 
 // movement - please calibrate these values
-var xSpeed = 0.1;
+var xSpeed = 0.5;
 var ySpeed = 0.1;
 
-document.addEventListener("keydown", onDocumentKeyDown, false);
-function onDocumentKeyDown(event) {
-    console.log(event.which)
-    if(event.keyCode === 37) {
-        console.log('Left was pressed', model);
+const keyUp = (e) => {
+    if(e.keyCode === 37) {
         model.position.x -= xSpeed;
-        // camera.position.x -= xSpeed;
+        gsap.to(model.rotation, {
+            z: 0
+        })
     }
-    else if(event.keyCode === 39) {
+    else if(e.keyCode === 39) {
+        gsap.to(model.rotation, {
+            z: 0
+        })
+    }
+}
+const keyDown = (e) => {
+    console.log(e.which)
+    if(e.keyCode === 37) {
+        
+        gsap.timeline()
+        .to(model.rotation, {
+            z: -0.5,
+        })
+        .to(model.position, {
+            x: `-=${xSpeed}` 
+        }, '<')
+    }
+    else if(e.keyCode === 39) {
         console.log('Right was pressed');
-        model.position.x += xSpeed;
-
+        // model.position.x += xSpeed;
+        gsap.timeline()
+        .to(model.rotation, {
+            z: 0.5,
+        })
+        .to(model.position, {
+            x: `+=${xSpeed}` 
+        }, '<')
         // camera.position.x += xSpeed;
     }
-    else if(event.keyCode === 32) {
+    else if(e.keyCode === 32) {
         if(wingRT.rotation.y >= 0.3) {
             closeWings()
         }else {
@@ -272,6 +308,10 @@ function onDocumentKeyDown(event) {
         // camera.position.x += xSpeed;
     }
 };
+
+
+document.addEventListener("keyup", keyUp, false)
+document.addEventListener("keydown", keyDown, false);
 
 const tick = () =>
 {
