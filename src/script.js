@@ -3,7 +3,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
+// import { TextureLoader } from 'three/examples/jsm/loaders/texture'
 import gsap from 'gsap'
+import { Vector3 } from 'three'
 
 THREE.ColorManagement.enabled = false
 
@@ -19,8 +21,47 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+// Loaders
+const textureLoader = new THREE.TextureLoader()
+
 /**
- * Models
+ * Stars particles
+ */
+// 
+
+const particlesGeometry = new THREE.BufferGeometry()
+const count = 10000
+
+const positions = new Float32Array(count * 3)
+
+for(let i = 0 ; i< count; i ++ ) {
+    positions[i] = (Math.random() - 0.5) * 15
+}
+
+particlesGeometry.setAttribute(
+    'position',
+    new THREE.BufferAttribute(positions, 3)
+)
+
+const sprite = textureLoader.load('/textures/particles/1.png')
+
+// Material
+const particlesMaterial = new THREE.PointsMaterial({
+    size: 0.05,
+    sizeAttenuation: true,
+    alphaMap: sprite,
+    transparent: true,
+    depthWrite: false
+})
+
+// Points
+const particles = new THREE.Points(particlesGeometry, particlesMaterial)
+
+scene.add(particles)
+
+
+/**
+ * X Wing
  */
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('/draco/')
@@ -85,7 +126,7 @@ const floor = new THREE.Mesh(
 floor.rotation.x = - Math.PI * 0.5
 
 floor.receiveShadow = true
-scene.add(floor)
+// scene.add(floor)
 
 /**
  * Lights
@@ -182,6 +223,7 @@ scene.add(camera)
 
 // Controls
 const controls = new OrbitControls(camera, canvas)
+controls.enableZoom = false;
 controls.target.set(0, 0.75, 0)
 controls.enableDamping = true
 
@@ -256,13 +298,12 @@ gui.add(animations,'OpenWings');
 gui.add(animations,'CloseWings');
 
 
-// movement - please calibrate these values
-var xSpeed = 0.5;
+// Movement speed
+var xSpeed = 0.8;
 var ySpeed = 0.1;
 
 const keyUp = (e) => {
     if(e.keyCode === 37) {
-        model.position.x -= xSpeed;
         gsap.to(model.rotation, {
             z: 0
         })
@@ -286,8 +327,6 @@ const keyDown = (e) => {
         }, '<')
     }
     else if(e.keyCode === 39) {
-        console.log('Right was pressed');
-        // model.position.x += xSpeed;
         gsap.timeline()
         .to(model.rotation, {
             z: 0.5,
@@ -295,7 +334,6 @@ const keyDown = (e) => {
         .to(model.position, {
             x: `+=${xSpeed}` 
         }, '<')
-        // camera.position.x += xSpeed;
     }
     else if(e.keyCode === 32) {
         if(wingRT.rotation.y >= 0.3) {
