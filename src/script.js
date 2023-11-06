@@ -30,24 +30,24 @@ const textureLoader = new THREE.TextureLoader()
 // 
 
 const particlesGeometry = new THREE.BufferGeometry()
-const count = 10000
+const count = 3000
 
 const positions = new Float32Array(count * 3)
 
 for(let i = 0 ; i< count; i ++ ) {
-    positions[i] = (Math.random() - 0.5) * 15
+    positions[i] = (Math.random() - 0.5) * 20
 }
 
 particlesGeometry.setAttribute(
     'position',
-    new THREE.BufferAttribute(positions, 3)
+    new THREE.BufferAttribute(positions, 3),
 )
 
 const sprite = textureLoader.load('/textures/particles/1.png')
 
 // Material
 const particlesMaterial = new THREE.PointsMaterial({
-    size: 0.05,
+    size: 0.09,
     sizeAttenuation: true,
     alphaMap: sprite,
     transparent: true,
@@ -56,7 +56,7 @@ const particlesMaterial = new THREE.PointsMaterial({
 
 // Points
 const particles = new THREE.Points(particlesGeometry, particlesMaterial)
-
+particles.position.z = -5
 scene.add(particles)
 
 
@@ -357,6 +357,8 @@ const tick = () =>
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
 
+    let velocity = 0
+    let aceleration = 0.002
     //Update mixer
     if(mixer != null) {
         mixer.update(deltaTime)  
@@ -365,6 +367,27 @@ const tick = () =>
         // model.position.x = Math.cos(elapsedTime * 2) / 10
         model.position.y = Math.sin(elapsedTime * 2) / 10
     }
+
+    // Particles animation
+    for(let i = 0 ; i < count; i ++){
+        const i3 = i * 3
+
+        velocity += aceleration
+
+        particlesGeometry.attributes.position.array[i3 + 2] -= -velocity
+        
+        if(particlesGeometry.attributes.position.array[i3 + 2] > 15) {
+            particlesGeometry.attributes.position.array[i3] = (Math.random() - 0.5) * 20
+            particlesGeometry.attributes.position.array[i3 + 1] = (Math.random() - 0.5) * 20
+            particlesGeometry.attributes.position.array[i3 + 2] = (Math.random() - 0.5) * 20
+            velocity = 0.02
+        }
+        particles.rotation.z += 0.0000005
+
+    }
+
+
+    particlesGeometry.attributes.position.needsUpdate = true
     // Update controls
     controls.update()
     // Render
