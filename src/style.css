@@ -17,3 +17,51 @@ body
     left: 0;
     outline: none;
 }
+
+.panel {
+    position: fixed;
+    bottom: 2em;
+    right: 2em;
+    z-index: 2;
+}
+.movement-sticks .row {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+.movement-sticks {
+    width: 100%;
+    height: 100%;
+}
+.key {
+    width: 90px;
+    height: 90px;
+    border: 3px solid rgb(255 255 255 / 30%);
+    margin: 0.3em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.key img {
+    width: 50%;
+    opacity: 0.3;
+}
+
+.key.top img {
+    transform: rotate(45deg);
+}
+
+.key.left img {
+    transform: rotate(315deg);
+}
+
+.key.down img {
+    transform:rotate(225deg);
+}
+
+.key.right img {
+    transform: rotate(135deg);
+}

@@ -383,7 +383,6 @@ const tick = () =>
             velocity = 0.02
         }
         particles.rotation.z += 0.0000005
-
     }
 
 
