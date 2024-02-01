@@ -27,7 +27,14 @@ const textureLoader = new THREE.TextureLoader()
 /**
  * Stars particles
  */
-// 
+
+// Handle DOM Elements
+
+let startButton = document.getElementById('start')
+let intro = document.getElementById('intro')
+let leftButton = document.getElementById('left')
+let rightButton = document.getElementById('right')
+let panel = document.getElementById('panel')
 
 const particlesGeometry = new THREE.BufferGeometry()
 const count = 3000
@@ -90,6 +97,7 @@ gltfLoader.load(
         wingLB = model.children[4]
 
         model.scale.set(0.5, 0.5, 0.5)
+        model.position.set(0, 0, 10)
         model.rotation.set(Math.PI * 2, Math.PI , 0)
 
         const xWingFolder = gui.addFolder('xWing')
@@ -304,18 +312,48 @@ var ySpeed = 0.1;
 
 const keyUp = (e) => {
     if(e.keyCode === 37) {
-        gsap.to(model.rotation, {
+        gsap.timeline()
+        .to(model.rotation, {
             z: 0
         })
+        .to(leftButton, {
+            background: '#000',
+            color: '#000000'
+        }, '<')
     }
     else if(e.keyCode === 39) {
-        gsap.to(model.rotation, {
+        gsap.timeline()
+        .to(model.rotation, {
             z: 0
         })
+        .to(rightButton, {
+            background: '#000',
+            color: '#000000'
+        }, '<')
     }
 }
+
+const onEnter = () => {
+
+    gsap.timeline()
+    .to(intro, {
+        scale: 10,
+        opacity: 0,
+        zIndex: -1
+    })
+    .to(model.position, {
+        z: 0,
+    }, '>')
+    .to(panel, {
+        visibility: 'visible'
+    })
+}
+
 const keyDown = (e) => {
     console.log(e.which)
+    if(e.keyCode === 13) {
+        onEnter()
+    }
     if(e.keyCode === 37) {
         
         gsap.timeline()
@@ -325,6 +363,10 @@ const keyDown = (e) => {
         .to(model.position, {
             x: `-=${xSpeed}` 
         }, '<')
+        .to(leftButton, {
+            background: '#ffffff6e',
+            color: '#000000'
+        }, '<')
     }
     else if(e.keyCode === 39) {
         gsap.timeline()
@@ -333,6 +375,10 @@ const keyDown = (e) => {
         })
         .to(model.position, {
             x: `+=${xSpeed}` 
+        }, '<')
+        .to(rightButton, {
+            background: '#ffffff6e',
+            color: '#000000'
         }, '<')
     }
     else if(e.keyCode === 32) {
@@ -350,6 +396,7 @@ const keyDown = (e) => {
 
 document.addEventListener("keyup", keyUp, false)
 document.addEventListener("keydown", keyDown, false);
+startButton.addEventListener('click', onEnter, false);
 
 const tick = () =>
 {

@@ -10,21 +10,26 @@
     <canvas class="webgl"></canvas>
     <script type="module" src="./script.js"></script>
     <!-- <script type="module" src="./stars/stars.js"></script> -->
-    <div class="panel">
+    <div class="intro" id="intro">
+        <p class="intro-text">Welcome to</p>
+        <img src="./icons/logo_transparent.png" />
+        <button id="start" class="button start">START</button>
+    </div>
+    <div class="panel" id="panel">
         <div class="movement-sticks">
             <div class="row">
-                <div class="key top">
+                <div class="key top button" id="top">
                     <img src="./icons/arrow-pixel.svg" />
                 </div>
             </div>
             <div class="row">
-                <div class="key left">
+                <div class="key left button" id="left">
                     <img src="./icons/arrow-pixel.svg" />
                 </div>
-                <div class="key down">
+                <div class="key down button" id="down">
                     <img src="./icons/arrow-pixel.svg" />
                 </div>
-                <div class="key right">
+                <div class="key right button" id="right">
                     <img src="./icons/arrow-pixel.svg" />
                 </div>
             </div>
